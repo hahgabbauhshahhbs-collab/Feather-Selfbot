@@ -1,0 +1,101 @@
+let currentToken = "";
+
+async function validateAndDeploy() {
+    const token = document.getElementById('tokenInput').value.trim();
+    if (!token) return alert("Please enter your Discord token");
+
+    const btn = document.querySelector('button[onclick="validateAndDeploy()"]');
+    btn.innerHTML = "DEPLOYING...";
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/api/validate_token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            if (data.user?.username) document.getElementById('username').textContent = data.user.username;
+            if (data.user?.avatar) document.getElementById('avatar').src = data.user.avatar;
+        } else {
+            alert(data.message || "Login failed");
+        }
+    } catch (err) {
+        alert("Server not responding. Make sure app.py is running.");
+    } finally {
+        btn.innerHTML = "DEPLOY SELFBOT";
+        btn.disabled = false;
+    }
+}
+
+function logout() {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+// Streaming
+function openStreamingModal() { document.getElementById('streamingModal').classList.remove('hidden'); }
+function closeStreamingModal() { document.getElementById('streamingModal').classList.add('hidden'); }
+
+async function startStreaming() {
+    const title = document.getElementById('streamTitle').value.trim() || "Feather Selfbot";
+    alert(`✅ Streaming Started!\nTitle: ${title}\n\nUse command: .stream ${title}`);
+    closeStreamingModal();
+}
+
+// Dummy Features
+function startSafeSpam() {
+    alert("Safe Spam Started! (Demo Mode)");
+}
+
+// Snow + Glow
+function createSnow() {
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let snowflakes = [];
+    class Snowflake {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height - canvas.height;
+            this.radius = Math.random() * 3 + 1.5;
+            this.speed = Math.random() * 1.5 + 0.8;
+            this.wind = Math.random() * 0.8 - 0.4;
+        }
+        update() { this.y += this.speed; this.x += this.wind; if (this.y > canvas.height) this.y = -10; }
+        draw() {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill();
+        }
+    }
+    for (let i = 0; i < 120; i++) snowflakes.push(new Snowflake());
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        snowflakes.forEach(s => { s.update(); s.draw(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+}
+
+function initGlow() {
+    const card = document.getElementById('loginScreen');
+    const overlay = card.querySelector('.glow-overlay');
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        overlay.style.setProperty('--mouse-x', `${x}%`);
+        overlay.style.setProperty('--mouse-y', `${y}%`);
+    });
+}
+
+window.addEventListener('load', () => {
+    createSnow();
+    initGlow();
+});
