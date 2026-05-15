@@ -1,0 +1,67 @@
+.glass {
+  background: rgba(10, 10, 12, 0.95);
+  backdrop-filter: blur(20px);
+}
+
+.shiny-text {
+  background: linear-gradient(90deg, #ddd 0%, #ddd 40%, #fff 50%, #ddd 60%, #ddd 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+  filter: drop-shadow(0 0 20px rgb(255 255 255 / 0.7));
+}
+
+.feather-title { font-size: 4.5rem; letter-spacing: -0.05em; }
+
+@keyframes shine {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Continuous Subtle Outline Glow */
+.subtle-glow {
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 30px rgba(255,255,255,0.08);
+}
+
+.subtle-glow::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
+  border-radius: 31px;
+  z-index: -1;
+  animation: subtle-rotate 12s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes subtle-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.glow-overlay {
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+              rgba(255,255,255,0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.subtle-glow:active .glow-overlay,
+.subtle-glow:hover .glow-overlay {
+  opacity: 1;
+}
+
+.bottom-box, .feature-card {
+  background: rgba(20, 20, 24, 0.9);
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: all 0.3s ease;
+}
+
+.bottom-box:hover, .feature-card:hover {
+  border-color: #fff;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+                            }
